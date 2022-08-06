@@ -1,4 +1,4 @@
-#include<bits/stdc++.h>
+#include<iostream>
 
 using namespace std;
 
@@ -13,6 +13,6 @@ int	main()
         int result = a + b;
         printf("%d \n", result);
     }
-    
+
     return 0;
 }
