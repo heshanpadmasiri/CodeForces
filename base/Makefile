@@ -15,7 +15,7 @@ clean:
 	rm -f *.diff
 
 %.exe: %.cpp
-	clang $< -o $@
+	clang++ $< -o $@
 
 %.diff: %.in %.out $(EXE)
 	less $*.in | ./$(EXE) > $*.actual		
