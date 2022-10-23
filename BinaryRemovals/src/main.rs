@@ -1,4 +1,5 @@
 use std::io;
+use std::collections::HashMap;
 
 fn main() {
     let mut t = String::new();
@@ -23,13 +24,19 @@ fn solve() -> bool {
     if chars.len() <= 2 {
         return true;
     }
-    return solve_inner(&chars, 0, None, None);
+    let mut dp = HashMap::new();
+    return solve_inner(&chars, 0, None, None, &mut dp);
 }
 
-fn solve_inner(chars: &Vec<char>, index: usize, last_val: Option<char>, last_skip_index: Option<usize>) -> bool {
+fn solve_inner(chars: &Vec<char>, index: usize, last_val: Option<char>, last_skip_index: Option<usize>, dp: &mut HashMap<DpKey, bool>) -> bool {
     // println!("index : {}, last_val: {:?}, last_skip_index: {:?}", index, last_val, last_skip_index);
     if index >= chars.len() {
         return true;
+    }
+    let key = DpKey { index, last_val, last_skip_index };
+    let memo = dp.get(&key);
+    if memo.is_some() {
+        return *memo.unwrap();
     }
     let mut must_skip = false;
     if last_val.is_some() {
@@ -40,7 +47,7 @@ fn solve_inner(chars: &Vec<char>, index: usize, last_val: Option<char>, last_ski
     }
     // lhs is sorted
     if !must_skip {
-        let inclusive = solve_inner(chars, index + 1, Some(chars[index]), last_skip_index);
+        let inclusive = solve_inner(chars, index + 1, Some(chars[index]), last_skip_index, dp);
         if inclusive {
             return true;
         }
@@ -53,7 +60,14 @@ fn solve_inner(chars: &Vec<char>, index: usize, last_val: Option<char>, last_ski
         skippable = true;
     }
     if skippable {
-        return solve_inner(chars, index + 1, last_val, Some(index)); 
+        return solve_inner(chars, index + 1, last_val, Some(index), dp); 
     }
+    dp.insert(key, false);
     return false;
+}
+#[derive(Eq, Hash, PartialEq)] 
+struct DpKey {
+    index: usize,
+    last_val: Option<char>,
+    last_skip_index: Option<usize>
 }
