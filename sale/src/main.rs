@@ -12,6 +12,6 @@ fn main() {
     prices.sort();
     
     let ans:i64 = prices.into_iter().take(m).filter(|&price| price < 0).sum::<i64>() * -1;
-    // let tmp = prices.into_iter().take(m).filter(|&price| price < 0).collect::<Vec<_>>();
+
     println!("{}", ans);
 }
