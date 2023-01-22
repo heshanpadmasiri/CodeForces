@@ -1,5 +1,8 @@
 use std::io;
 
+type Reader = Box<dyn io::BufRead>;
+type Int = i64;
+
 fn main() {
     let mut reader = std_reader();
     let reader_ref = &mut reader;
@@ -8,31 +11,31 @@ fn main() {
     }
 }
 
-fn solve(input: &mut Box<dyn io::BufRead>) -> Vec<String> {
+fn solve(input: &mut Reader) -> Vec<String> {
     let _n = read_int(input);
     let nums = read_array(input);
-    let sum: i64 = nums.iter().sum();
+    let sum: Int = nums.iter().sum();
 
     let output = vec![ sum.to_string()];
 
     output
 }
 
-fn read_int(reader: &mut Box<dyn io::BufRead>) -> i64 {
+fn read_int(reader: &mut Reader) -> Int {
     let line = read_line(reader);
     return line.trim().parse().expect("expect an integer");
 }
 
-fn read_array(reader: &mut Box<dyn io::BufRead>) -> Vec<i64> {
+fn read_array(reader: &mut Reader) -> Vec<Int> {
     let line = read_line(reader);
-    return line.trim().split(' ').flat_map(str::parse::<i64>).collect::<Vec<_>>();
+    return line.trim().split(' ').flat_map(str::parse::<Int>).collect::<Vec<_>>();
 }
 
-fn std_reader() -> Box<dyn io::BufRead> {
+fn std_reader() -> Reader {
     Box::new(io::BufReader::new(io::stdin()))
 }
 
-fn read_line(input_reader: &mut Box<dyn io::BufRead>) -> String {
+fn read_line(input_reader: &mut Reader) -> String {
     let mut line = String::new();
     input_reader.read_line(&mut line).expect("expect input line");
     line
