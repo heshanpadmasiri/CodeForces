@@ -6,19 +6,33 @@ type Int = i64;
 fn main() {
     let mut reader = std_reader();
     let reader_ref = &mut reader;
-    for line in solve(reader_ref) {
-        println!("{}", line);
+    println!("{}", solve(TestCase::from_input(reader_ref)).to_string());
+}
+
+struct TestCase {
+    numbers: Vec<Int>,
+}
+
+struct Answer {
+    sum: Int,
+}
+
+impl TestCase {
+    fn from_input(reader: &mut Reader) -> Self {
+        let _ = read_int(reader);
+        let numbers = read_array(reader);
+        Self { numbers }
     }
 }
 
-fn solve(input: &mut Reader) -> Vec<String> {
-    let _n = read_int(input);
-    let nums = read_array(input);
-    let sum: Int = nums.iter().sum();
+impl ToString for Answer {
+    fn to_string(&self) -> String {
+        self.sum.to_string()
+    }
+}
 
-    let output = vec![ sum.to_string()];
-
-    output
+fn solve(case: TestCase) -> Answer {
+    Answer { sum: case.numbers.iter().sum() }
 }
 
 fn read_int(reader: &mut Reader) -> Int {
@@ -47,10 +61,10 @@ mod test {
     use std::io::{self, BufRead, BufReader};
     use std::path::Path;
 
-    use crate::solve;
+    use crate::{solve, TestCase};
 
     #[derive(Debug)]
-    struct TestCase {
+    struct Test {
         input_file: std::path::PathBuf,
         output_file: std::path::PathBuf,
     }
@@ -59,20 +73,19 @@ mod test {
     fn test() {
         for each in get_test_cases() {
             println!("TEST_CASE: {:?}", each);
-
             let mut reader = test_case_reader(&each);
-            let actual = solve(&mut reader);
+            let actual = solve(TestCase::from_input(&mut reader)).to_string();
             assert_eq!(actual, test_case_output(&each));
         }
     }
 
-    fn test_case_reader(test_case: &TestCase) -> Box<dyn BufRead> {
+    fn test_case_reader(test_case: &Test) -> Box<dyn BufRead> {
         Box::new(io::BufReader::new(
             fs::File::open(&test_case.input_file).unwrap(),
         ))
     }
 
-    fn test_case_output(test_case: &TestCase) -> Vec<String> {
+    fn test_case_output(test_case: &Test) -> String {
         let file = fs::File::open(&test_case.output_file).unwrap();
         let buf_reader = BufReader::new(file);
         buf_reader
@@ -81,7 +94,7 @@ mod test {
             .collect()
     }
 
-    fn get_test_cases() -> Vec<TestCase> {
+    fn get_test_cases() -> Vec<Test> {
         println!("{}", std::env::current_dir().unwrap().to_str().unwrap());
         let mut test_cases = Vec::new();
         for each in fs::read_dir("./input").unwrap() {
@@ -90,7 +103,7 @@ mod test {
             let output_file =
                 Path::new(&format!("./output/{}.out", output_file_name)).to_path_buf();
             assert!(output_file.exists());
-            test_cases.push(TestCase {
+            test_cases.push(Test {
                 input_file,
                 output_file,
             });
