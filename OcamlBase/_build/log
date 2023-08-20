@@ -1,0 +1,5 @@
+# dune init project OcamlBase
+# OCAMLPARAM: unset
+# Shared cache: disabled
+# Workspace root: /Users/heshanpadmasiri/Projects/CodeForces/OcamlBase
+# Auto-detected concurrency: 8
